@@ -276,13 +276,19 @@ public class IGOreFeature extends Feature<IGOreFeatureConfig>
 			if(!mineral.instance().acceptableStoneType(stone.instance())) {
 				return null;
 			}
-
-			// List of blocks for each ore richness
-			List<BlockState> blocks = List.of(
-					mineral.getOreBlock(stone, OreRichness.POOR).getDefaultBlockState(),
-					mineral.getOreBlock(stone, OreRichness.NORMAL).getDefaultBlockState(),
-					mineral.getOreBlock(stone, OreRichness.RICH).getDefaultBlockState()
-			);
+			//fix quark stone world gen crash 
+			List<BlockState> blocks;
+			try {
+				// List of blocks for each ore richness
+				blocks = List.of(
+						mineral.getOreBlock(stone, OreRichness.POOR).getDefaultBlockState(),
+						mineral.getOreBlock(stone, OreRichness.NORMAL).getDefaultBlockState(),
+						mineral.getOreBlock(stone, OreRichness.RICH).getDefaultBlockState()
+				);
+			}
+			catch(NullPointerException e) {
+				return stoneState;
+			}
 
 			int selectedBlock = noiseValue > (THRESHOLD+0.2) ? 2 : (noiseValue > (THRESHOLD+0.1) ? 1 : 0);
 
